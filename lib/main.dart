@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import './question.dart';
+import './answer.dart';
+import './result.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,19 +17,43 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   var questionIndex = 0;
+  var score = 0;
 
-  void onAnswerClicked() {
+  var questions = [
+    {
+      'qText': 'Is pluto a planet?',
+      'answers': [
+        {'text': 'Yes', 'score': 1},
+        {'text': 'No', 'score': 0},
+        {'text': 'Maybe So', 'score': 0},
+      ],
+    },
+    {
+      'qText': 'Is pluto a planet?',
+      'answers': [
+        {'text': 'Yes', 'score': 1},
+        {'text': 'No', 'score': 0},
+        {'text': 'Maybe So', 'score': 0},
+      ],
+    },
+    {
+      'qText': 'Is pluto a planet?',
+      'answers': [
+        {'text': 'Yes', 'score': 1},
+        {'text': 'No', 'score': 0},
+        {'text': 'Maybe So', 'score': 0},
+      ],
+    },
+  ];
+
+  void onAnswerClicked(int score) {
+    this.score += score;
     setState(() {
       questionIndex++;
     });
   }
 
-  var questions = [
-    'What color is the sun?',
-    'How many planets are in our solar system?',
-    'Is pluto a planet?'
-  ];
-
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -34,41 +61,23 @@ class MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('Quiz App'),
         ),
-        body: Center(
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Spacer(),
-                Question("Question 1: ${questions[questionIndex]}"),
-                Spacer(),
-                ElevatedButton(
-                  onPressed: onAnswerClicked,
-                  child: Text("Answer 1"),
+        body: questionIndex < questions.length
+            ? Center( 
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Question(
+                      "Question ${questionIndex + 1}: ${questions[questionIndex]['qText']}",
+                    ),
+                    ...(questions[questionIndex]['answers'] as List<Map<String, Object>>)
+                        .map((answer) {
+                      return Answer(() => onAnswerClicked(answer['score'] as int), answer['text'] as String);
+                    }).toList(),
+                  ],
                 ),
-                Spacer(),
-                ElevatedButton(
-                  onPressed: onAnswerClicked,
-                  child: Text("Answer 2"),
-                ),
-                Spacer(),
-                ElevatedButton(
-                  onPressed: onAnswerClicked,
-                  child: Text("Answer 3"),
-                ),
-                Spacer(),
-              ]),
-        ),
+              )
+            : Result(score),
       ),
     );
   }
 }
-
-// class QuestionStyle1 extends StatelessWidget {
-//   @override 
-//   Widget build (BuildContext context) {
-//     return ElevatedButton(
-//                   onPressed: null,
-//                   child: Text("Answer 3"),
-//                 );
-//   }
-// }
